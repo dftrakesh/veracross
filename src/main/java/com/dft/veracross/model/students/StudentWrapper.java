@@ -1,4 +1,4 @@
-package com.dft.veracross.model.students.studentWrapper;
+package com.dft.veracross.model.students;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -9,6 +9,6 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class StudentWrapper {
 
-    public StudentData data;
+    public StudentsInfo data;
 
 }

@@ -6,6 +6,5 @@ import java.util.List;
 
 @Data
 public class ParentsWrapper {
-
-    List<Parents> data;
+    List<Parent> data;
 }
