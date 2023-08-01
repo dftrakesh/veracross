@@ -1,8 +1,7 @@
 package com.dft.veracross;
 
 import com.dft.veracross.credentials.VeracrossCredentials;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 import java.net.URI;
@@ -14,19 +13,25 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-@AllArgsConstructor
-@Builder(builderMethodName = "newBuilder", toBuilder = true)
+@RequiredArgsConstructor
 public class VeracrossSDK {
 
-    private final VeracrossCredentials credentials;
-    int MAX_ATTEMPTS = 50;
-    int TIME_OUT_DURATION = 60000;
-    private final HttpClient client;
+    public static final String FORWARD_SLASH_CHARACTER = "/";
+    public static final String PARENTS_ENDPOINT = "/parents";
+    public static final String STUDENTS_ENDPOINT = "/students";
     private static final String AUTHORIZATION = "Authorization";
-    private static final String BASE_ENDPOINT = "https://api.veracross.com/api-sandbox/v3";
+    private static final String BASE_ENDPOINT = "https://api.veracross.com";
+    private static final String VERSION_3 = "/v3";
+    int MAX_ATTEMPTS = 100;
+    int TIME_OUT_DURATION = 1700;
+
+    protected String baseUrl;
+    private final HttpClient client;
+    private final VeracrossCredentials credentials;
 
     public VeracrossSDK(VeracrossCredentials credentials) {
         this.credentials = credentials;
+        this.baseUrl = BASE_ENDPOINT + FORWARD_SLASH_CHARACTER + credentials.getSandbox();
         client = HttpClient.newBuilder()
                 .followRedirects(HttpClient.Redirect.ALWAYS)
                 .version(HttpClient.Version.HTTP_1_1)
@@ -36,34 +41,26 @@ public class VeracrossSDK {
 
     @SneakyThrows
     protected URI addParameters(URI uri, HashMap<String, String> params) {
-        StringBuilder queryString = new StringBuilder();
+        String query = uri.getQuery();
+        StringBuilder builder = new StringBuilder();
+
+        if (query != null)
+            builder.append(query);
 
         for (Map.Entry<String, String> entry : params.entrySet()) {
             String keyValueParam = entry.getKey() + "=" + entry.getValue();
-            if (queryString.length() > 0) {
-                queryString.append("&");
-            }
-            queryString.append(keyValueParam);
+            if (!builder.toString().isEmpty())
+                builder.append("&");
+            builder.append(keyValueParam);
         }
-
-        String pathWithQueryString = uri.getPath();
-        if (queryString.length() > 0) {
-            pathWithQueryString += "?" + queryString.toString();
-        }
-
-        return new URI(uri.getScheme(), uri.getAuthority(), pathWithQueryString, uri.getFragment());
+        return new URI(uri.getScheme(), uri.getAuthority(), uri.getPath(), builder.toString(), uri.getFragment());
     }
 
-    @SneakyThrows
     protected URI baseUrl(String path) {
-        return new URI(new StringBuilder()
-                .append(BASE_ENDPOINT)
-                .append(path)
-                .toString());
+        return URI.create(baseUrl + VERSION_3 + path);
     }
 
-    @SneakyThrows
-    protected HttpRequest get(URI uri, VeracrossCredentials veracrossCredentials) {
+    protected HttpRequest get(URI uri) {
         return HttpRequest.newBuilder(uri)
                 .header(AUTHORIZATION, credentials.getAccessToken())
                 .GET()
@@ -86,18 +83,11 @@ public class VeracrossSDK {
                                                             HttpResponse.BodyHandler<T> handler,
                                                             HttpResponse<T> resp, int count) {
         if (resp.statusCode() == 429 && count < MAX_ATTEMPTS) {
-            Thread.sleep(TIME_OUT_DURATION);
-            return client.sendAsync(request, handler)
-                    .thenComposeAsync(response -> tryResend(client, request, handler, response, count + 1));
+            long lLimitResetSeconds = resp.headers().firstValueAsLong("x-rate-limit-reset").orElse(TIME_OUT_DURATION);
+            Thread.sleep(lLimitResetSeconds * 1000);
+            HttpResponse<T> response = client.send(request, handler);
+            return tryResend(client, request, handler, response, count + 1);
         }
         return CompletableFuture.completedFuture(resp);
-    }
-
-    public VeracrossParents getParentApi() {
-        return new VeracrossParents(credentials);
-    }
-
-    public VeracrossStudents getStudentApi() {
-        return new VeracrossStudents(credentials);
     }
 }

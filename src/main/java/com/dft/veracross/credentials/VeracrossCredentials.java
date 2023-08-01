@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class VeracrossCredentials {
 
     private String accessToken;
+    private String sandbox;
 }
