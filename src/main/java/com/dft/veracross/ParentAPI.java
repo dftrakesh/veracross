@@ -11,9 +11,9 @@ import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
-public class Parent extends VeracrossSDK {
+public class ParentAPI extends VeracrossSDK {
 
-    public Parent(VeracrossCredentials credentials) {
+    public ParentAPI(VeracrossCredentials credentials) {
         super(credentials);
     }
 
