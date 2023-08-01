@@ -9,6 +9,7 @@ import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 
 public class Students extends VeracrossSDK {
 
@@ -16,7 +17,7 @@ public class Students extends VeracrossSDK {
         super(credentials);
     }
 
-    public StudentWrapper getStudentById(Integer id) {
+    public StudentWrapper getStudentById(Integer id) throws ExecutionException, InterruptedException {
 
         URI uri = baseUrl(STUDENTS_ENDPOINT.concat(FORWARD_SLASH_CHARACTER)
                 .concat(id.toString()));
@@ -26,7 +27,7 @@ public class Students extends VeracrossSDK {
         return getRequestWrapped(request, handler);
     }
 
-    public StudentsWrapper getAllStudent(HashMap<String, String> params) {
+    public StudentsWrapper getAllStudent(HashMap<String, String> params) throws ExecutionException, InterruptedException {
 
         URI uri = baseUrl(STUDENTS_ENDPOINT);
         uri = addParameters(uri, params);

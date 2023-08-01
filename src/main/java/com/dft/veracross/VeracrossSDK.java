@@ -39,7 +39,6 @@ public class VeracrossSDK {
                 .build();
     }
 
-    @SneakyThrows
     protected URI addParameters(URI uri, HashMap<String, String> params) {
         String query = uri.getQuery();
         StringBuilder builder = new StringBuilder();
@@ -53,7 +52,7 @@ public class VeracrossSDK {
                 builder.append("&");
             builder.append(keyValueParam);
         }
-        return new URI(uri.getScheme(), uri.getAuthority(), uri.getPath(), builder.toString(), uri.getFragment());
+        return URI.create(uri.toString());
     }
 
     protected URI baseUrl(String path) {
