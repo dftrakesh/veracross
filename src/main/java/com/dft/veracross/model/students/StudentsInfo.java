@@ -2,6 +2,7 @@ package com.dft.veracross.model.students;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
@@ -19,6 +20,7 @@ public class StudentsInfo {
     public String preferredName;
     public Integer householdId;
     public Integer gender;
+    @JsonProperty("email_1")
     public String email1;
     public Integer gradeLevel;
     public Integer schoolLevel;
