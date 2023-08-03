@@ -4,10 +4,6 @@ import com.dft.veracross.constantcode.ConstantCodes;
 import com.dft.veracross.credentials.AccessCredentials;
 import com.dft.veracross.credentials.AuthCredentials;
 import com.dft.veracross.handler.JsonBodyHandler;
-import com.dft.veracross.model.parents.Parent;
-import com.dft.veracross.model.parents.ParentsWrapper;
-import com.dft.veracross.model.students.StudentsInfo;
-import com.dft.veracross.model.students.StudentsWrapper;
 import com.dft.veracross.model.token.AccessTokenResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -34,6 +30,7 @@ public class VeracrossSDK {
     public static final String PARENTS_ENDPOINT = "/parents";
     public static final String STUDENTS_ENDPOINT = "/students";
     private static final String AUTHORIZATION = "Authorization";
+    private static final String X_API_VALUE_LISTS = "X-API-Value-Lists";
     private static final String BASE_ENDPOINT = "https://api.veracross.com/";
     private static final String VERSION_3 = "/v3";
     int MAX_ATTEMPTS = 100;
@@ -141,23 +138,25 @@ public class VeracrossSDK {
         return HttpRequest.BodyPublishers.ofString(builder.toString());
     }
 
-    protected HttpRequest get(URI uri) {
+    protected HttpRequest get(URI uri, String xValueList) {
         refreshAccessToken();
         return HttpRequest.newBuilder(uri)
                 .header(AUTHORIZATION, accessCredentials.getAccessToken())
+                .headers(X_API_VALUE_LISTS, xValueList)
                 .GET()
                 .build();
     }
 
-    protected HttpRequest get(URI uri, int iPage) {
+    protected HttpRequest get(URI uri, int iPage, String xValueList) {
         refreshAccessToken();
-        return get(uri, iPage, 100);
+        return get(uri, iPage, 100, xValueList);
     }
 
-    protected HttpRequest get(URI uri, int iPage, int iSize) {
+    protected HttpRequest get(URI uri, int iPage, int iSize, String xValueList) {
         refreshAccessToken();
         return HttpRequest.newBuilder(uri)
                 .header(AUTHORIZATION, accessCredentials.getAccessToken())
+                .headers(X_API_VALUE_LISTS, xValueList)
                 .header("X-Page-Number", String.valueOf(iPage))
                 .header("X-Page-Size", String.valueOf(iSize))
                 .GET()
