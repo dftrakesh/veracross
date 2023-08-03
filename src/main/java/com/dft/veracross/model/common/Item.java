@@ -12,6 +12,6 @@ import lombok.Data;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class Item {
 
-    public int id;
+    public String id;
     public String description;
 }

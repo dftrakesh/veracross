@@ -22,9 +22,9 @@ public class StudentsInfo {
     public Integer gender;
     @JsonProperty("email_1")
     public String email1;
-    public Integer gradeLevel;
+    public String gradeLevel;
     public Integer schoolLevel;
-    public Integer graduationYear;
+    public String graduationYear;
     public Integer homeroom;
     public StudentsData studentData;
     public Student student;
