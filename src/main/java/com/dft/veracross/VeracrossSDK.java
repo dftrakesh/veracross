@@ -17,9 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -143,6 +141,7 @@ public class VeracrossSDK {
         return HttpRequest.newBuilder(uri)
                 .header(AUTHORIZATION, accessCredentials.getAccessToken())
                 .headers(X_API_VALUE_LISTS, xValueList)
+                .header("X-Page-Size", "1000")
                 .GET()
                 .build();
     }
