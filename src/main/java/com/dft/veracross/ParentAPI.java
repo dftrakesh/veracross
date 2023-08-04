@@ -2,7 +2,6 @@ package com.dft.veracross;
 
 import com.dft.veracross.credentials.AuthCredentials;
 import com.dft.veracross.handler.JsonBodyHandler;
-import com.dft.veracross.model.common.ValueList;
 import com.dft.veracross.model.parents.Parent;
 import com.dft.veracross.model.parents.ParentWrapper;
 import com.dft.veracross.model.parents.ParentsWrapper;
@@ -11,7 +10,6 @@ import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class ParentAPI extends VeracrossSDK {
@@ -30,7 +28,6 @@ public class ParentAPI extends VeracrossSDK {
 
     public ParentsWrapper getAllParent(String xValueList) {
         List<Parent> parents = new ArrayList<>();
-        List<ValueList> fieldValueList = new ArrayList<>();
         URI uri = baseUrl(PARENTS_ENDPOINT);
 
         HttpRequest request = get(uri, xValueList);
@@ -41,14 +38,14 @@ public class ParentAPI extends VeracrossSDK {
         while (true) {
 
             parentsWrapper =  getRequestWrapped(request, handler);
-            if(parentsWrapper.getData().isEmpty()) break;
+            if(parentsWrapper.getData().isEmpty()) {
+                parentsWrapper.setData(parents);
+                return parentsWrapper;
+            }
             parents.addAll(parentsWrapper.getData());
-            fieldValueList.addAll(parentsWrapper.getValueLists());
 
             request = get(uri, ++iPage, 1000, xValueList);
         }
-        parentsWrapper.setData(parents);
-        parentsWrapper.setValueLists(fieldValueList);
-        return parentsWrapper;
+
     }
 }
