@@ -17,14 +17,14 @@ public class AuthCredentials {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.environment = "";
-        this.scope = "students:list students:read parents:list parents:read";
+        this.scope = "students:list parents:list";
     }
 
     public AuthCredentials(String clientId, String clientSecret, String environment) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.environment = environment;
-        this.scope = "students:list students:read parents:list parents:read";
+        this.scope = "students:list parents:list";
     }
 
     public AuthCredentials(String clientId, String clientSecret, String environment, String scope) {
