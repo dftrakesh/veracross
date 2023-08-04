@@ -19,23 +19,23 @@ public class StudentAPI extends VeracrossSDK {
         super(credentials);
     }
 
-    public StudentWrapper getStudentById(Integer id, String xValueList) {
+    public StudentWrapper getStudentById(Integer id) {
 
         URI uri = baseUrl(STUDENTS_ENDPOINT.concat(FORWARD_SLASH_CHARACTER)
                 .concat(id.toString()));
 
-        HttpRequest request = get(uri, xValueList);
+        HttpRequest request = get(uri, "include");
         HttpResponse.BodyHandler<StudentWrapper> handler = new JsonBodyHandler<>(StudentWrapper.class);
         return getRequestWrapped(request, handler);
     }
 
-    public StudentsWrapper getAllStudent(String xValueList) {
+    public StudentsWrapper getAllStudent() {
 
         List<StudentsInfo> listStudents = new ArrayList<>();
         List<ValueList> fieldValueList = new ArrayList<>();
         URI uri = baseUrl(STUDENTS_ENDPOINT);
 
-        HttpRequest request = get(uri, xValueList);
+        HttpRequest request = get(uri, "include");
         HttpResponse.BodyHandler<StudentsWrapper> handler = new JsonBodyHandler<>(StudentsWrapper.class);
 
         int iPage = 1;
@@ -48,7 +48,7 @@ public class StudentAPI extends VeracrossSDK {
             listStudents.addAll(studentsWrapper.getData());
             fieldValueList.addAll(studentsWrapper.getValueLists());
 
-            request = get(uri, ++iPage, 1000, xValueList);
+            request = get(uri, ++iPage, 1000, "include");
         }
         studentsWrapper.setData(listStudents);
         studentsWrapper.setValueLists(fieldValueList);

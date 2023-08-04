@@ -12,6 +12,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ParentsWrapper {
-    public List<Parent> data;
-    public List<ValueList> valueLists;
+
+    List<Parent> data;
+    List<ValueList> valueLists;
 }

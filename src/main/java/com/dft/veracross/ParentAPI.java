@@ -18,34 +18,30 @@ public class ParentAPI extends VeracrossSDK {
         super(credentials);
     }
 
-    public ParentWrapper getParentById(Integer id, String xValueList) {
+    public Parent getParentById(Integer id) {
         URI uri = baseUrl(PARENTS_ENDPOINT + FORWARD_SLASH_CHARACTER + id);
 
-        HttpRequest request = get(uri, xValueList);
+        HttpRequest request = get(uri, "");
         HttpResponse.BodyHandler<ParentWrapper> handler = new JsonBodyHandler<>(ParentWrapper.class);
-        return getRequestWrapped(request, handler);
+        return getRequestWrapped(request, handler).getData();
     }
 
-    public ParentsWrapper getAllParent(String xValueList) {
+    public List<Parent> getAllParent() {
         List<Parent> parents = new ArrayList<>();
         URI uri = baseUrl(PARENTS_ENDPOINT);
 
-        HttpRequest request = get(uri, xValueList);
+        HttpRequest request = get(uri, "");
         HttpResponse.BodyHandler<ParentsWrapper> handler = new JsonBodyHandler<>(ParentsWrapper.class);
 
         int iPage = 1;
-        ParentsWrapper parentsWrapper;
         while (true) {
 
-            parentsWrapper =  getRequestWrapped(request, handler);
-            if(parentsWrapper.getData().isEmpty()) {
-                parentsWrapper.setData(parents);
-                return parentsWrapper;
-            }
+            ParentsWrapper parentsWrapper =  getRequestWrapped(request, handler);
+            if(parentsWrapper.getData().isEmpty()) break;
             parents.addAll(parentsWrapper.getData());
-
-            request = get(uri, ++iPage, 1000, xValueList);
+            request = get(uri, ++iPage, 1000, "");
         }
+        return parents;
 
     }
 }
