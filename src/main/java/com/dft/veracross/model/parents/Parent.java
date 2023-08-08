@@ -11,7 +11,7 @@ import lombok.Data;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class Parent {
 
-    Integer id;
+    String id;
     Integer householdId;
     Boolean headOfHousehold;
     Integer namePrefix;

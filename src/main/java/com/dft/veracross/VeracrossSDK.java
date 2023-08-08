@@ -27,6 +27,9 @@ public class VeracrossSDK {
     public static final String FORWARD_SLASH_CHARACTER = "/";
     public static final String PARENTS_ENDPOINT = "/parents";
     public static final String STUDENTS_ENDPOINT = "/students";
+    public static final String RELATIONSHIPS_ENDPOINT = "/relationships";
+    public static final String PERSON_ID_PARAM = "?person_id=";
+    public static final String REALTIONSHIPS = "&relationship=";
     private static final String AUTHORIZATION = "Authorization";
     private static final String X_API_VALUE_LISTS = "X-API-Value-Lists";
     private static final String BASE_ENDPOINT = "https://api.veracross.com/";
@@ -178,8 +181,9 @@ public class VeracrossSDK {
                                                             HttpResponse.BodyHandler<T> handler,
                                                             HttpResponse<T> resp, int count) {
         if (resp.statusCode() == 429 && count < MAX_ATTEMPTS) {
-            long lLimitResetSeconds = resp.headers().firstValueAsLong("x-rate-limit-reset").orElse(TIME_OUT_DURATION);
-            Thread.sleep(lLimitResetSeconds * 1000);
+            //TODO we are getting time in header so need to change logic
+//            long lLimitResetSeconds = resp.headers().firstValueAsLong("x-rate-limit-reset").orElse(TIME_OUT_DURATION);
+            Thread.sleep(180000);
             HttpResponse<T> response = client.send(request, handler);
             return tryResend(client, request, handler, response, count + 1);
         }
