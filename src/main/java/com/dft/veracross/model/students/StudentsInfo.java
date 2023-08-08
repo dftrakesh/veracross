@@ -11,7 +11,7 @@ import lombok.Data;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class StudentsInfo {
 
-    Integer id;
+    String id;
     String firstName;
     String middleName;
     String lastName;
