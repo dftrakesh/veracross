@@ -14,6 +14,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -35,7 +36,6 @@ public class VeracrossSDK {
     private static final String BASE_ENDPOINT = "https://api.veracross.com/";
     private static final String VERSION_3 = "/v3";
     int MAX_ATTEMPTS = 100;
-    int TIME_OUT_DURATION = 1700;
 
     protected String baseUrl;
     private final HttpClient client;
@@ -181,9 +181,17 @@ public class VeracrossSDK {
                                                             HttpResponse.BodyHandler<T> handler,
                                                             HttpResponse<T> resp, int count) {
         if (resp.statusCode() == 429 && count < MAX_ATTEMPTS) {
-            //TODO we are getting time in header so need to change logic
-//            long lLimitResetSeconds = resp.headers().firstValueAsLong("x-rate-limit-reset").orElse(TIME_OUT_DURATION);
-            Thread.sleep(180000);
+            long lLimitResetSeconds = resp.headers().firstValueAsLong("x-rate-limit-reset").getAsLong();
+            long milis = lLimitResetSeconds * 1000;
+
+            java.time.LocalDateTime current = new Timestamp(System.currentTimeMillis()).toLocalDateTime();
+            java.time.LocalDateTime rateTime = new Timestamp(milis).toLocalDateTime();
+
+            if (rateTime.isAfter(current)) {
+                long toMillis = Duration.between(current, rateTime).toMillis();
+                Thread.sleep(toMillis);
+            }
+
             HttpResponse<T> response = client.send(request, handler);
             return tryResend(client, request, handler, response, count + 1);
         }
